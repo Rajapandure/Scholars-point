@@ -1,0 +1,18 @@
+{
+  "name": "Scholar's Point \u2014 Offline Learning Platform",
+  "short_name": "Scholar's Point",
+  "description": "Offline-first Classes 1\u201310 learning platform for NCERT, CBSE, and MPBSE (English & Hindi medium).",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F4F6FB",
+  "theme_color": "#007AFF",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
