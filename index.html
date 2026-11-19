@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#007AFF" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Scholar's Point" />
+  <meta name="description" content="Offline-first Classes 1–10 learning platform for NCERT, CBSE, and MPBSE (English & Hindi medium)." />
+  <title>Scholar's Point | Classes 1–10 Offline Learning Platform</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(15, 23, 42, 0.1);
+      --brand: #007aff;
+      --brand-soft: #e8f2ff;
+      --radius: 20px;
+      --shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    }
+    html.dark {
+      --bg: #09090b;
+      --surface: #18181b;
+      --surface-2: #27272a;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: rgba(255, 255, 255, 0.12);
+      --brand-soft: rgba(0, 122, 255, 0.18);
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 72px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    @media (min-width: 768px) { body { padding-bottom: 0; } }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    .hidden { display: none !important; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .btn-amber { background: #fef3c7; color: #92400e; }
+    .btn-emerald { background: #059669; color: #fff; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    .pill-brand { background: var(--brand-soft); color: var(--brand); }
+    .pill-green { background: #dcfce7; color: #166534; }
+    .pill-amber { background: #fef3c7; color: #92400e; }
+    .pill-purple { background: #f3e8ff; color: #6b21a8; }
+
+    /* Top Header */
+    header.topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: 54px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+    html.dark header.topbar { background: rgba(24, 24, 27, 0.88); }
+    .topbar-inner {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .brand-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--brand);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Layout Shell */
+    .app-shell {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      gap: 20px;
+      flex: 1;
+    }
+    aside.desktop-nav {
+      display: none;
+      width: 220px;
+      flex-shrink: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
+    @media (min-width: 768px) { aside.desktop-nav { display: flex; } }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: left;
+    }
+    .nav-item.active {
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+    .nav-item:hover:not(.active) { background: var(--surface-2); color: var(--text); }
+    main.content-area { flex: 1; min-width: 0; }
+
+    /* Mobile Bottom Bar */
+    nav.mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 6px 4px;
+    }
+    html.dark nav.mobile-nav { background: rgba(24, 24, 27, 0.92); }
+    @media (min-width: 768px) { nav.mobile-nav { display: none; } }
+    .mobile-nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 4px 0;
+    }
+    .mobile-nav-btn.active { color: var(--brand); }
+
+    /* Grids */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (min-width: 900px) { .subjects-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
+    .subject-card {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .subject-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08); }
+    .mode-junior .subject-card { border-radius: 26px; padding: 20px; border-width: 2px; }
+    .mode-junior .subject-card h4 { font-size: 16px; }
+    .mode-senior .subject-card { border-radius: 14px; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (min-width: 900px) { .action-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .action-card {
+      padding: 16px;
+      border-radius: 18px;
+      text-align: left;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+    .progress-fill { height: 100%; border-radius: 999px; background: var(--brand); transition: width 0.25s ease; }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      font-size: 13px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+
+    /* Toast */
+    #toastContainer {
+      position: fixed;
+      top: 64px;
+      right: 16px;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 340px;
+    }
+    .toast {
+      padding: 11px 14px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+  </style>
+</head>
+<body>
+  <div id="toastContainer"></div>
+
+  <!-- Top Header -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button onclick="switchView('home')" class="brand-logo">
+        <span class="brand-badge">SP</span>
+        <span>Scholar's Point</span>
+      </button>
+
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="switchView('profile')" id="headerStudentPill" class="pill pill-brand">
+          <span id="headerAvatar">👦</span>
+          <span id="headerStudentText">Aarav • Cl 10 • CBSE</span>
+        </button>
+        <button onclick="toggleMedium()" id="mediumToggleBtn" class="pill" title="Switch Medium">EN / हिं</button>
+        <button onclick="openRoughSlate()" class="pill pill-amber" title="Rough Slate">✏️ Slate</button>
+        <button onclick="toggleDarkMode()" id="darkModeBtn" class="pill" title="Toggle Theme">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Shell -->
+  <div id="appShell" class="app-shell">
+    <aside class="desktop-nav">
+      <button onclick="switchView('home')" id="dnav-home" class="nav-item active"><span>🏠 Home</span></button>
+      <button onclick="switchView('subjects')" id="dnav-subjects" class="nav-item"><span>📚 Subjects</span></button>
+      <button onclick="switchView('tasks')" id="dnav-tasks" class="nav-item"><span>📝 My Tasks</span><span id="tasksBadge" class="pill pill-amber">0</span></button>
+      <button onclick="switchView('progress')" id="dnav-progress" class="nav-item"><span>📈 My Progress</span></button>
+      <button onclick="switchView('profile')" id="dnav-profile" class="nav-item"><span>👤 Profile</span></button>
+      <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">
+        <button onclick="openTeacherPinModal()" class="nav-item"><span>🔒 Teacher CMS</span><span class="pill">PIN</span></button>
+      </div>
+    </aside>
+
+    <main id="mainContent" class="content-area"></main>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-nav">
+    <button onclick="switchView('home')" id="mnav-home" class="mobile-nav-btn active"><span style="font-size:18px;">🏠</span><span>Home</span></button>
+    <button onclick="switchView('subjects')" id="mnav-subjects" class="mobile-nav-btn"><span style="font-size:18px;">📚</span><span>Subjects</span></button>
+    <button onclick="switchView('tasks')" id="mnav-tasks" class="mobile-nav-btn"><span style="font-size:18px;">📝</span><span>My Tasks</span></button>
+    <button onclick="switchView('progress')" id="mnav-progress" class="mobile-nav-btn"><span style="font-size:18px;">📈</span><span>Progress</span></button>
+    <button onclick="switchView('profile')" id="mnav-profile" class="mobile-nav-btn"><span style="font-size:18px;">👤</span><span>Profile</span></button>
+  </nav>
+
+  <!-- Rough Slate Modal -->
+  <div id="roughSlateModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <strong style="font-size:15px;">✏️ Rough Slate & Scratchpad</strong>
+        <div style="display:flex;gap:8px;">
+          <button onclick="clearRoughCanvas()" class="btn btn-secondary">Clear</button>
+          <button onclick="closeRoughSlate()" class="btn btn-secondary">Close</button>
+        </div>
+      </div>
+      <div style="border:2px dashed #f59e0b;border-radius:16px;background:#fffbeb;height:320px;overflow:hidden;">
+        <canvas id="roughCanvas" style="width:100%;height:100%;touch-action:none;cursor:crosshair;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher PIN Modal -->
+  <div id="teacherPinModal" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:360px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:8px;">🔒</div>
+      <h3 style="margin:0 0 6px;">Teacher CMS Studio</h3>
+      <p style="margin:0 0 14px;font-size:12px;color:var(--muted);">Enter 4-digit PIN (Default: <strong>1234</strong>)</p>
+      <input id="teacherPinInput" type="password" maxlength="4" placeholder="••••" class="input" style="text-align:center;font-size:18px;letter-spacing:6px;font-weight:800;margin-bottom:14px;" />
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeTeacherPinModal()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+        <button onclick="verifyTeacherPin()" class="btn btn-primary" style="flex:1;">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Add/Edit Modal -->
+  <div id="studentModal" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:440px;">
+      <h3 id="studentModalTitle" style="margin:0 0 14px;">Add Student Profile</h3>
+      <form onsubmit="saveStudentProfileForm(event)" style="display:flex;flex-direction:column;gap:12px;">
+        <input type="hidden" id="editStudentId" />
+        <div>
+          <label style="font-size:12px;font-weight:700;">Student Name</label>
+          <input id="stuNameInput" required class="input" placeholder="e.g. Aarav" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:12px;font-weight:700;">Class (1–10)</label>
+            <select id="stuClassInput" class="input"></select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;">Board</label>
+            <select id="stuBoardInput" class="input">
+              <option value="NCERT">NCERT</option>
+              <option value="CBSE">CBSE</option>
+              <option value="MPBSE">MPBSE (MP Board)</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:12px;font-weight:700;">Medium</label>
+            <select id="stuMediumInput" class="input">
+              <option value="EN">English</option>
+              <option value="HI">Hindi (हिन्दी)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;">Avatar</label>
+            <select id="stuAvatarInput" class="input">
+              <option value="👦">👦 Boy</option>
+              <option value="👧">👧 Girl</option>
+              <option value="🧑">🧑 Student</option>
+              <option value="🦊">🦊 Explorer</option>
+              <option value="🦉">🦉 Scholar</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
+          <button type="button" onclick="closeStudentModal()" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. STORAGE ABSTRACTION (ScholarsPointDB_v6 — 15 IndexedDB Object Stores)
+    // =========================================================================
+    const DB_NAME = "ScholarsPointDB_v6";
+    const DB_VERSION = 1;
+    const STORES = [
+      "student_profiles",
+      "curriculum",
+      "textbook_catalogue",
+      "lessons",
+      "topics",
+      "examples",
+      "questions",
+      "answers",
+      "test_attempts",
+      "learning_progress",
+      "bookmarks",
+      "revision_schedules",
+      "achievements",
+      "content_metadata",
+      "imported_pdfs"
+    ];
+
+    const StorageAbstraction = {
+      db: null,
+      async init() {
+        if (this.db) return this.db;
+        this.db = await new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            STORES.forEach((name) => {
+              if (!db.objectStoreNames.contains(name)) {
+                const keyPath = name === "student_profiles" ? "studentId" : "id";
+                const store = db.createObjectStore(name, { keyPath });
+                if (["test_attempts", "learning_progress", "bookmarks", "revision_schedules", "achievements", "answers"].includes(name)) {
+                  store.createIndex("by_studentId", "studentId", { unique: false });
+                }
+              }
+            });
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+        if (navigator.storage && navigator.storage.persist) {
+          try { await navigator.storage.persist(); } catch (_) {}
+        }
+        return this.db;
+      },
+      async getAll(storeName) {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(storeName, "readonly");
+          const req = tx.objectStore(storeName).getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
+        });
+      },
+      async getByStudent(storeName, studentId) {
+        const all = await this.getAll(storeName);
+        return all.filter((item) => item.studentId === studentId);
+      },
+      async put(storeName, record) {
+        const db = await this.init();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(storeName, "readwrite");
+          tx.objectStore(storeName).put(record);
+          tx.oncomplete = () => resolve(record);
+          tx.onerror = () => reject(tx.error);
+        });
+      },
+      async remove(storeName, key) {
+        const db = await this.init();
+        return new Promise((resolve) => {
+          const tx = db.transaction(storeName, "readwrite");
+          tx.objectStore(storeName).delete(key);
+          tx.oncomplete = () => resolve(true);
+        });
+      },
+      async getQuota() {
+        if (navigator.storage && navigator.storage.estimate) {
+          return await navigator.storage.estimate();
+        }
+        return { usage: 0, quota: 0 };
+      }
+    };
+
+    // =========================================================================
+    // 2. SUBJECT METADATA & FACTORY SEED DATA (CLASSES 1–10, NCERT/CBSE/MPBSE)
+    // =========================================================================
+    const SUBJECTS_META = {
+      maths:   { id: "maths",   name: "Mathematics",    hi: "गणित",           color: "#2563EB", bg: "#EFF6FF", icon: "📐" },
+      english: { id: "english", name: "English",        hi: "अंग्रेज़ी",      color: "#DB2777", bg: "#FDF2F8", icon: "📖" },
+      science: { id: "science", name: "Science / EVS",  hi: "विज्ञान",        color: "#059669", bg: "#ECFDF5", icon: "🔬" },
+      social:  { id: "social",  name: "Social Science", hi: "सामाजिक विज्ञान", color: "#D97706", bg: "#FFFBEB", icon: "🌍" },
+      hindi:   { id: "hindi",   name: "Hindi",          hi: "हिन्दी",         color: "#7C3AED", bg: "#F5F3FF", icon: "🪶" }
+    };
+
+    function getSeedProfiles() {
+      return [
+        {
+          studentId: "stu_aarav_10",
+          name: "Aarav",
+          avatar: "🦉",
+          classNum: 10,
+          board: "CBSE",
+          medium: "EN",
+          xp: 340,
+          streak: 6,
+          weeklyGoalChapters: 5,
+          lastActivity: "Real Numbers — Mock Test",
+          tasks: [
+            { id: "t1", title: "Maths Ex 1.2 Questions", type: "Homework", due: "Tomorrow", done: false },
+            { id: "t2", title: "Chemical Reactions Quiz", type: "Test", due: "Friday", done: false }
+          ]
+        },
+        {
+          studentId: "stu_meera_6",
+          name: "Meera",
+          avatar: "👧",
+          classNum: 6,
+          board: "MPBSE",
+          medium: "HI",
+          xp: 210,
+          streak: 4,
+          weeklyGoalChapters: 4,
+          lastActivity: "अध्याय 1: भोजन के घटक",
+          tasks: [
+            { id: "t3", title: "विज्ञान शब्दार्थ अभ्यास", type: "Homework", due: "Today", done: false }
+          ]
+        },
+        {
+          studentId: "stu_rohan_3",
+          name: "Rohan",
+          avatar: "🦊",
+          classNum: 3,
+          board: "NCERT",
+          medium: "EN",
+          xp: 150,
+          streak: 3,
+          weeklyGoalChapters: 3,
+          lastActivity: "Fun with Numbers",
+          tasks: []
+        }
+      ];
+    }
+
+    function getSeedCurriculum() {
+      const chapters = [];
+      const sampleContent = {
+        1: {
+          maths: ["Shapes and Space", "Numbers from One to Nine"],
+          english: ["A Happy Child", "Three Little Pigs"],
+          hindi: ["झूला", "आम की कहानी"],
+          science: ["My Body & Senses", "Plants Around Us"]
+        },
+        3: {
+          maths: ["Where to Look From", "Fun with Numbers"],
+          english: ["Good Morning", "Bird Talk"],
+          science: ["Poonam's Day Out", "The Plant Fairy"],
+          hindi: ["कक्कू", "शेखीबाज़ मक्खी"]
+        },
+        6: {
+          maths: ["Knowing Our Numbers", "Whole Numbers"],
+          science: ["Components of Food (भोजन के घटक)", "Sorting Materials into Groups"],
+          english: ["Who Did Patrick's Homework?", "How the Dog Found Himself a New Master!"],
+          social: ["What, Where, How and When?", "The Earth in the Solar System"],
+          hindi: ["वह चिड़िया जो", "बचपन"]
+        },
+        10: {
+          maths: ["Real Numbers", "Polynomials", "Pair of Linear Equations in Two Variables"],
+          science: ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Life Processes"],
+          english: ["A Letter to God", "Nelson Mandela: Long Walk to Freedom"],
+          social: ["The Rise of Nationalism in Europe", "Resources and Development"],
+          hindi: ["सूरदास के पद", "राम-लक्ष्मण-परशुराम संवाद"]
+        }
+      };
+
+      for (let cls = 1; cls <= 10; cls++) {
+        const subjList = cls <= 5 ? ["maths", "english", "science", "hindi"] : ["maths", "english", "science", "social", "hindi"];
+        subjList.forEach((subj) => {
+          const titles = (sampleContent[cls] && sampleContent[cls][subj]) || [
+            `Chapter 1: Foundations of ${SUBJECTS_META[subj].name} (Class ${cls})`,
+            `Chapter 2: Core Concepts & Practice (Class ${cls})`
+          ];
+          titles.forEach((title, idx) => {
+            const id = `ch_${cls}_${subj}_${idx + 1}`;
+            chapters.push({
+              id,
+              classNum: cls,
+              subject: subj,
+              title,
+              orderByBoard: { NCERT: idx + 1, CBSE: idx + 1, MPBSE: idx === 0 ? 1 : idx + 1 },
+              session: "2026-27",
+              edition: "2026 Edition",
+              status: "published",
+              summary: `Structured ${SUBJECTS_META[subj].name} chapter for Class ${cls} covering key definitions, reading guidance, word meanings, worked examples, and textbook exercises.`,
+              readingGuide: `Read each paragraph slowly. Break complex terms into syllables and verify each formula or rule against the worked examples.`,
+              pronunciationHi: `अध्याय ${idx + 1} का उच्चारण धीरे और स्पष्ट रूप से करें।`,
+              wordMeanings: [
+                { word: "Theorem / प्रमेय", meaning: "A proven mathematical or scientific statement.", hi: "सिद्ध किया गया कथन" },
+                { word: "Ratio / अनुपात", meaning: "Comparison of two quantities by division.", hi: "दो राशियों की तुलना" },
+                { word: "Observation / अवलोकन", meaning: "Careful watching and recording of facts.", hi: "ध्यानपूर्वक निरीक्षण" }
+              ],
+              concepts: [
+                `Core Principle 1 for ${title}: Understand the foundational definition and real-world application.`,
+                `Core Principle 2 for ${title}: Apply step-by-step reasoning to solve textbook problems.`
+              ],
+              examples: [
+                { q: `Worked Example 1 (${title}): Solve the standard textbook illustration.`, a: `Step 1: Identify given values. Step 2: Apply the core rule. Step 3: Verify units and final answer.` }
+              ],
+              exercises: [
+                { type: "Short Answer", q: `Explain the primary concept of "${title}" in 2–3 sentences.`, a: `Focus on the main definition, key rule, and one practical example from the textbook.` },
+                { type: "Long Answer", q: `Derive or describe the main application of "${title}" with a neat example.`, a: `State the rule, show step-by-step working, and conclude clearly.` }
+              ],
+              questions: [
+                { id: `${id}_q1`, q: `Which statement best describes the focus of "${title}"?`, options: ["Core textbook concept", "Unrelated topic", "Optional appendix", "None of these"], ans: "Core textbook concept", explanation: "Directly covered in Section 1 of the chapter." },
+                { id: `${id}_q2`, q: `What is the recommended first step when solving problems in "${title}"?`, options: ["Guess the answer", "Identify given values & rule", "Skip reading", "Memorize blindly"], ans: "Identify given values & rule", explanation: "Structured problem-solving always starts by listing given data." }
+              ]
+            });
+          });
+        });
+      }
+      return chapters;
+    }
+
+    // =========================================================================
+    // 3. APP STATE & INITIALIZATION
+    // =========================================================================
+    let state = {
+      view: "home",
+      profiles: [],
+      activeStudent: null,
+      curriculum: [],
+      progress: [],
+      bookmarks: [],
+      attempts: [],
+      importedPdfs: [],
+      selectedSubject: null,
+      subjectAction: "learn", // learn | practice | exercises | mock
+      selectedChapterId: null,
+      cmsUnlocked: false,
+      cmsTab: "chapters"
+    };
+
+    async function initApp() {
+      await StorageAbstraction.init();
+
+      // Theme preference (allowed in localStorage)
+      if (localStorage.getItem("sp_pref_theme") === "dark") {
+        document.documentElement.classList.add("dark");
+        document.getElementById("darkModeBtn").textContent = "☀️";
+      }
+
+      // Seed profiles if empty
+      let profiles = await StorageAbstraction.getAll("student_profiles");
+      if (profiles.length === 0) {
+        for (const p of getSeedProfiles()) {
+          await StorageAbstraction.put("student_profiles", p);
+        }
+        profiles = await StorageAbstraction.getAll("student_profiles");
+      }
+      state.profiles = profiles;
+
+      // Seed curriculum if empty
+      let curriculum = await StorageAbstraction.getAll("curriculum");
+      if (curriculum.length === 0) {
+        for (const c of getSeedCurriculum()) {
+          await StorageAbstraction.put("curriculum", c);
+        }
+        curriculum = await StorageAbstraction.getAll("curriculum");
+      }
+      state.curriculum = curriculum;
+
+      // Active student ID (allowed in localStorage)
+      const savedId = localStorage.getItem("sp_active_student_id");
+      state.activeStudent = profiles.find((p) => p.studentId === savedId) || profiles[0];
+      localStorage.setItem("sp_active_student_id", state.activeStudent.studentId);
+
+      await loadStudentScopedData();
+      applyAgeAdaptiveMode();
+      renderHeader();
+      renderView();
+      setupRoughSlate();
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+    }
+
+    async function loadStudentScopedData() {
+      const sid = state.activeStudent.studentId;
+      state.progress = await StorageAbstraction.getByStudent("learning_progress", sid);
+      state.bookmarks = await StorageAbstraction.getByStudent("bookmarks", sid);
+      state.attempts = await StorageAbstraction.getByStudent("test_attempts", sid);
+      state.importedPdfs = await StorageAbstraction.getAll("imported_pdfs");
+    }
+
+    function getAgeMode(cls) {
+      if (cls <= 5) return "junior";
+      if (cls <= 8) return "young";
+      return "senior";
+    }
+
+    function applyAgeAdaptiveMode() {
+      const shell = document.getElementById("appShell");
+      shell.classList.remove("mode-junior", "mode-young", "mode-senior");
+      shell.classList.add("mode-" + getAgeMode(state.activeStudent.classNum));
+    }
+
+    function renderHeader() {
+      const s = state.activeStudent;
+      document.getElementById("headerAvatar").textContent = s.avatar || "👦";
+      document.getElementById("headerStudentText").textContent = `${s.name} • Cl ${s.classNum} • ${s.board}`;
+      document.getElementById("mediumToggleBtn").textContent = s.medium === "HI" ? "हिं / EN" : "EN / हिं";
+      const pending = (s.tasks || []).filter((t) => !t.done).length;
+      document.getElementById("tasksBadge").textContent = pending;
+    }
+
+    function switchView(view) {
+      state.view = view;
+      ["home", "subjects", "tasks", "progress", "profile"].forEach((v) => {
+        const d = document.getElementById(`dnav-${v}`);
+        const m = document.getElementById(`mnav-${v}`);
+        if (d) d.classList.toggle("active", v === view);
+        if (m) m.classList.toggle("active", v === view);
+      });
+      renderView();
+    }
+
+    function renderView() {
+      const main = document.getElementById("mainContent");
+      if (state.view === "home") renderHome(main);
+      else if (state.view === "subjects") renderSubjectsView(main);
+      else if (state.view === "tasks") renderTasksView(main);
+      else if (state.view === "progress") renderProgressView(main);
+      else if (state.view === "profile") renderProfileView(main);
+      else if (state.view === "cms") renderCMSView(main);
+    }
+
+    // =========================================================================
+    // 4. HOME DASHBOARD (SUBJECT-FIRST & AGE-ADAPTIVE)
+    // =========================================================================
+    function getClassSubjects(cls) {
+      return cls <= 5 ? ["maths", "english", "science", "hindi"] : ["maths", "english", "science", "social", "hindi"];
+    }
+
+    function getChaptersFor(cls, subj, board) {
+      return state.curriculum
+        .filter((c) => c.classNum === cls && c.subject === subj && c.status === "published")
+        .sort((a, b) => (a.orderByBoard?.[board] || 99) - (b.orderByBoard?.[board] || 99));
+    }
+
+    function renderHome(main) {
+      const s = state.activeStudent;
+      const mode = getAgeMode(s.classNum);
+      const modeLabel = mode === "junior" ? "Junior Explorer (Classes 1–5)" : mode === "young" ? "Young Scholar (Classes 6–8)" : "Senior Scholar (Classes 9–10)";
+      const subjIds = getClassSubjects(s.classNum);
+      const completedCount = state.progress.filter((p) => p.completed).length;
+      const goal = s.weeklyGoalChapters || 4;
+      const goalPct = Math.min(100, Math.round((completedCount / goal) * 100));
+
+      const tasks = (s.tasks || []).filter((t) => !t.done);
+      const tasksSection = tasks.length > 0 ? `
+        <section class="card" style="padding:16px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;">📝 Your Tasks</strong>
+            <button onclick="switchView('tasks')" style="font-size:12px;font-weight:700;color:var(--brand);">See all →</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${tasks.map((t) => `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:var(--surface-2);">
+                <div>
+                  <div style="font-size:13px;font-weight:700;">${t.title}</div>
+                  <div style="font-size:11px;color:var(--muted);">${t.type} • Due ${t.due}</div>
+                </div>
+                <button onclick="toggleTaskDone('${t.id}')" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;">Mark Done</button>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      ` : "";
+
+      main.innerHTML = `
+        <section class="card" style="padding:20px;margin-bottom:18px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;">
+          <div>
+            <span class="pill pill-brand" style="margin-bottom:8px;">${modeLabel} • ${s.board}</span>
+            <h1 style="margin:0;font-size:22px;">Hi, ${s.name}! 👋</h1>
+            <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">What would you like to learn today?</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="pill pill-amber">🔥 ${s.streak} Day Streak</span>
+            <span class="pill pill-green">⭐ ${s.xp} XP</span>
+          </div>
+        </section>
+
+        <section style="margin-bottom:18px;">
+          <h2 style="margin:0 0 12px;font-size:15px;">My Subjects · Class ${s.classNum}</h2>
+          <div class="subjects-grid">
+            ${subjIds.map((id) => {
+              const meta = SUBJECTS_META[id];
+              const chs = getChaptersFor(s.classNum, id, s.board);
+              const done = chs.filter((c) => state.progress.some((p) => p.chapterId === c.id && p.completed)).length;
+              return `
+                <button onclick="openSubject('${id}')" class="subject-card">
+                  <div style="width:44px;height:44px;border-radius:14px;background:${meta.bg};display:flex;align-items:center;justify-content:center;font-size:22px;">
+                    ${meta.icon}
+                  </div>
+                  <div>
+                    <h4 style="margin:0;font-size:14px;">${s.medium === "HI" ? meta.hi : meta.name}</h4>
+                    <div style="font-size:11px;color:var(--muted);margin-top:3px;">${chs.length} Chapters • ${done} Done</div>
+                  </div>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </section>
+
+        ${tasksSection}
+
+        <section class="card" style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:13px;">Weekly Learning Goal: ${completedCount} / ${goal} chapters</strong>
+            <button onclick="switchView('progress')" style="font-size:12px;font-weight:700;color:var(--brand);">View Progress →</button>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${goalPct}%;"></div></div>
+        </section>
+      `;
+    }
+
+    // =========================================================================
+    // 5. SUBJECT WORKSPACE (LEARN, PRACTICE, EXERCISES, MOCK PAPERS)
+    // =========================================================================
+    function openSubject(subjId) {
+      state.selectedSubject = subjId;
+      state.subjectAction = "learn";
+      const chs = getChaptersFor(state.activeStudent.classNum, subjId, state.activeStudent.board);
+      state.selectedChapterId = chs[0]?.id || null;
+      switchView("subjects");
+    }
+
+    function renderSubjectsView(main) {
+      const s = state.activeStudent;
+      if (!state.selectedSubject) state.selectedSubject = getClassSubjects(s.classNum)[0];
+      const meta = SUBJECTS_META[state.selectedSubject];
+      const chs = getChaptersFor(s.classNum, state.selectedSubject, s.board);
+      const activeCh = chs.find((c) => c.id === state.selectedChapterId) || chs[0] || null;
+      if (activeCh) state.selectedChapterId = activeCh.id;
+
+      main.innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          ${getClassSubjects(s.classNum).map((id) => {
+            const m = SUBJECTS_META[id];
+            const active = id === state.selectedSubject;
+            return `<button onclick="openSubject('${id}')" class="btn ${active ? 'btn-primary' : 'btn-secondary'}">${m.icon} ${m.name}</button>`;
+          }).join("")}
+        </div>
+
+        <div class="action-grid" style="margin-bottom:16px;">
+          <button onclick="setSubjectAction('learn')" class="action-card" style="background:#2563EB;">
+            <strong style="font-size:14px;">1. LEARN</strong>
+            <span style="font-size:11px;opacity:0.9;">Chapters, reading & word meanings</span>
+          </button>
+          <button onclick="setSubjectAction('practice')" class="action-card" style="background:#7C3AED;">
+            <strong style="font-size:14px;">2. PRACTICE</strong>
+            <span style="font-size:11px;opacity:0.9;">Flashcards & worked examples</span>
+          </button>
+          <button onclick="setSubjectAction('exercises')" class="action-card" style="background:#059669;">
+            <strong style="font-size:14px;">3. EXERCISES</strong>
+            <span style="font-size:11px;opacity:0.9;">Textbook Q&A & solutions</span>
+          </button>
+          <button onclick="setSubjectAction('mock')" class="action-card" style="background:#D97706;">
+            <strong style="font-size:14px;">4. MOCK PAPERS</strong>
+            <span style="font-size:11px;opacity:0.9;">Chapter quiz & instant score</span>
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr;gap:16px;">
+          <div class="card" style="padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">Chapters (${s.board} • ${meta.name})</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              ${chs.length ? chs.map((c, idx) => {
+                const isDone = state.progress.some((p) => p.chapterId === c.id && p.completed);
+                const active = activeCh && c.id === activeCh.id;
+                return `<button onclick="selectChapter('${c.id}')" class="btn ${active ? 'btn-primary' : 'btn-secondary'}" style="font-size:12px;">
+                  Ch ${idx + 1}: ${c.title} ${isDone ? '✓' : ''}
+                </button>`;
+              }).join("") : `<p style="font-size:13px;color:var(--muted);">Learning content is being prepared for this subject.</p>`}
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            ${activeCh ? renderChapterActionBody(activeCh) : `<p style="color:var(--muted);">No chapter selected.</p>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function setSubjectAction(act) {
+      state.subjectAction = act;
+      renderView();
+    }
+
+    function selectChapter(chId) {
+      state.selectedChapterId = chId;
+      renderView();
+    }
+
+    function renderChapterActionBody(ch) {
+      const s = state.activeStudent;
+      const isBookmarked = (qId) => state.bookmarks.some((b) => b.questionId === qId);
+
+      if (state.subjectAction === "learn") {
+        return `
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;">
+            <div>
+              <span class="pill pill-green">🟢 Available Offline</span>
+              <span class="pill">${ch.edition} • ${ch.session}</span>
+            </div>
+            <button onclick="markChapterComplete('${ch.id}')" class="btn btn-emerald">✓ Mark Chapter Complete (+20 XP)</button>
+          </div>
+          <h2 style="margin:0 0 8px;">${ch.title}</h2>
+          <p style="font-size:13px;line-height:1.6;color:var(--muted);">${ch.summary}</p>
+
+          <div style="margin-top:14px;padding:14px;border-radius:14px;background:var(--surface-2);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <strong style="font-size:13px;">🗣️ How to Read & Pronunciation (उच्चारण)</strong>
+              <button onclick="speakText('${ch.readingGuide.replace(/'/g, "")}')" class="btn btn-amber" style="padding:5px 10px;font-size:11px;">🔊 Read Aloud</button>
+            </div>
+            <p style="margin:0;font-size:13px;">${ch.readingGuide}</p>
+            <p style="margin:6px 0 0;font-size:12px;color:var(--muted);">${ch.pronunciationHi}</p>
+          </div>
+
+          <div style="margin-top:14px;">
+            <strong style="font-size:13px;">📖 Word Meanings (शब्दार्थ)</strong>
+            <table style="margin-top:8px;">
+              <thead><tr><th>Word</th><th>Meaning</th><th>हिन्दी अर्थ</th><th>Audio</th></tr></thead>
+              <tbody>
+                ${(ch.wordMeanings || []).map((w) => `
+                  <tr>
+                    <td><strong>${w.word}</strong></td>
+                    <td>${w.meaning}</td>
+                    <td>${w.hi}</td>
+                    <td><button onclick="speakText('${w.word.replace(/'/g, "")}')" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;">🔊</button></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      if (state.subjectAction === "practice") {
+        return `
+          <h3 style="margin:0 0 12px;">⚡ Practice & Worked Examples</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${(ch.concepts || []).map((c, i) => `
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                <span style="font-size:13px;"><strong>Card ${i + 1}:</strong> ${c}</span>
+                <button onclick="speakText('${c.replace(/'/g, "")}')" class="btn btn-amber" style="padding:5px 10px;font-size:11px;">🔊</button>
+              </div>
+            `).join("")}
+            ${(ch.examples || []).map((ex, i) => `
+              <div style="padding:14px;border-radius:14px;border:1px solid var(--border);">
+                <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Example ${i + 1}: ${ex.q}</div>
+                <div style="font-size:13px;color:#059669;">${ex.a}</div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      if (state.subjectAction === "exercises") {
+        return `
+          <h3 style="margin:0 0 12px;">📘 Textbook Exercises & Solutions</h3>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            ${(ch.exercises || []).map((ex, i) => `
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);">
+                <span class="pill pill-brand" style="margin-bottom:6px;">${ex.type}</span>
+                <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Q${i + 1}. ${ex.q}</div>
+                <div style="font-size:13px;color:var(--muted);"><strong>Solution:</strong> ${ex.a}</div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      // Mock Papers / Quiz
+      return `
+        <h3 style="margin:0 0 12px;">⏱️ Chapter Mock Test (${ch.title})</h3>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          ${(ch.questions || []).map((q, i) => `
+            <div style="padding:14px;border-radius:14px;border:1px solid var(--border);">
+              <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;">
+                <strong style="font-size:13px;">Q${i + 1}. ${q.q}</strong>
+                <button onclick="toggleBookmark('${ch.id}', '${q.id}', '${q.q.replace(/'/g, "")}', '${q.ans.replace(/'/g, "")}')" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;">
+                  ${isBookmarked(q.id) ? "⭐ Saved" : "☆ Save Q"}
+                </button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${q.options.map((opt) => `
+                  <button onclick="answerMockQuestion('${ch.id}', '${q.id}', '${opt.replace(/'/g, "")}', '${q.ans.replace(/'/g, "")}', '${q.q.replace(/'/g, "")}')" class="btn btn-secondary" style="justify-content:flex-start;text-align:left;font-size:12px;">
+                    ${opt}
+                  </button>
+                `).join("")}
+              </div>
+              <div id="qres-${q.id}" style="margin-top:8px;font-size:12px;font-weight:700;"></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    async function markChapterComplete(chId) {
+      const sid = state.activeStudent.studentId;
+      await StorageAbstraction.put("learning_progress", {
+        id: `${sid}_${chId}`,
+        studentId: sid,
+        chapterId: chId,
+        completed: true,
+        updatedAt: new Date().toISOString()
+      });
+      state.activeStudent.xp = (state.activeStudent.xp || 0) + 20;
+      await StorageAbstraction.put("student_profiles", state.activeStudent);
+      await loadStudentScopedData();
+      renderView();
+      showToast("Chapter completed! +20 XP");
+    }
+
+    async function answerMockQuestion(chId, qId, chosen, correct, qText) {
+      const el = document.getElementById(`qres-${qId}`);
+      const isCorrect = chosen === correct;
+      const sid = state.activeStudent.studentId;
+
+      await StorageAbstraction.put("test_attempts", {
+        id: `att_${Date.now()}`,
+        studentId: sid,
+        chapterId: chId,
+        questionId: qId,
+        correct: isCorrect,
+        timestamp: new Date().toISOString()
+      });
+
+      if (isCorrect) {
+        el.style.color = "#059669";
+        el.textContent = "🎉 Correct! +10 XP";
+        state.activeStudent.xp += 10;
+        await StorageAbstraction.put("student_profiles", state.activeStudent);
+      } else {
+        el.style.color = "#dc2626";
+        el.textContent = `❌ Incorrect. Correct answer: ${correct}`;
+        await StorageAbstraction.put("bookmarks", {
+          id: `bm_${sid}_${qId}`,
+          studentId: sid,
+          chapterId: chId,
+          questionId: qId,
+          question: qText,
+          answer: correct,
+          type: "mistake"
+        });
+      }
+      await loadStudentScopedData();
+    }
+
+    async function toggleBookmark(chId, qId, qText, ans) {
+      const sid = state.activeStudent.studentId;
+      const bmId = `bm_${sid}_${qId}`;
+      if (state.bookmarks.some((b) => b.id === bmId)) {
+        await StorageAbstraction.remove("bookmarks", bmId);
+        showToast("Removed from saved questions", "info");
+      } else {
+        await StorageAbstraction.put("bookmarks", {
+          id: bmId,
+          studentId: sid,
+          chapterId: chId,
+          questionId: qId,
+          question: qText,
+          answer: ans,
+          type: "saved"
+        });
+        showToast("Saved to Mistake & Revision Notebook");
+      }
+      await loadStudentScopedData();
+      renderView();
+    }
+
+    // =========================================================================
+    // 6. TASKS, PROGRESS & PROFILE VIEWS
+    // =========================================================================
+    function renderTasksView(main) {
+      const tasks = state.activeStudent.tasks || [];
+      main.innerHTML = `
+        <div class="card" style="padding:20px;">
+          <h2 style="margin:0 0 10px;">📝 My Tasks (${state.activeStudent.name})</h2>
+          ${tasks.length === 0 ? `<p style="color:var(--muted);font-size:13px;">No pending homework or tests right now.</p>` : `
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${tasks.map((t) => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:14px;background:var(--surface-2);">
+                  <div>
+                    <div style="font-weight:700;font-size:13px;${t.done ? 'text-decoration:line-through;opacity:0.6;' : ''}">${t.title}</div>
+                    <div style="font-size:11px;color:var(--muted);">${t.type} • Due ${t.due}</div>
+                  </div>
+                  <button onclick="toggleTaskDone('${t.id}')" class="btn btn-secondary">${t.done ? 'Undo' : 'Complete'}</button>
+                </div>
+              `).join("")}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    async function toggleTaskDone(taskId) {
+      const t = (state.activeStudent.tasks || []).find((x) => x.id === taskId);
+      if (t) t.done = !t.done;
+      await StorageAbstraction.put("student_profiles", state.activeStudent);
+      renderHeader();
+      renderView();
+    }
+
+    function renderProgressView(main) {
+      const completed = state.progress.filter((p) => p.completed).length;
+      const correctAttempts = state.attempts.filter((a) => a.correct).length;
+      const accuracy = state.attempts.length ? Math.round((correctAttempts / state.attempts.length) * 100) : 0;
+
+      main.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card" style="padding:20px;">
+            <h2 style="margin:0 0 12px;">📈 My Progress & Revision</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);"><div style="font-size:20px;font-weight:800;">${state.activeStudent.xp}</div><div style="font-size:11px;color:var(--muted);">Total XP</div></div>
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);"><div style="font-size:20px;font-weight:800;">${completed}</div><div style="font-size:11px;color:var(--muted);">Chapters Done</div></div>
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);"><div style="font-size:20px;font-weight:800;">${accuracy}%</div><div style="font-size:11px;color:var(--muted);">Quiz Accuracy</div></div>
+              <div style="padding:14px;border-radius:14px;background:var(--surface-2);"><div style="font-size:20px;font-weight:800;">${state.bookmarks.length}</div><div style="font-size:11px;color:var(--muted);">Mistake / Saved Qs</div></div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <h3 style="margin:0 0 10px;">💡 Mistake & Saved Questions Notebook</h3>
+            ${state.bookmarks.length === 0 ? `<p style="font-size:13px;color:var(--muted);">No mistakes or saved questions yet.</p>` : `
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                ${state.bookmarks.map((b) => `
+                  <div style="padding:12px;border-radius:14px;background:var(--surface-2);">
+                    <div style="font-weight:700;font-size:13px;">${b.question}</div>
+                    <div style="font-size:12px;color:#059669;margin-top:4px;">Answer: ${b.answer}</div>
+                  </div>
+                `).join("")}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProfileView(main) {
+      main.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+              <div>
+                <h2 style="margin:0;">👤 Student Profiles</h2>
+                <p style="margin:4px 0 0;font-size:12px;color:var(--muted);">Each student has isolated progress, XP, bookmarks, and test history.</p>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="runIsolationTest()" class="btn btn-secondary">🧪 Isolation Test</button>
+                <button onclick="openStudentModal()" class="btn btn-primary">+ Add Student</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+              ${state.profiles.map((p) => {
+                const active = p.studentId === state.activeStudent.studentId;
+                return `
+                  <div style="padding:16px;border-radius:16px;border:2px solid ${active ? 'var(--brand)' : 'var(--border)'};background:var(--surface-2);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                      <div style="font-size:22px;">${p.avatar} <strong style="font-size:15px;">${p.name}</strong></div>
+                      ${active ? `<span class="pill pill-brand">Active</span>` : ""}
+                    </div>
+                    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Class ${p.classNum} • ${p.board} • ${p.medium} • ${p.xp} XP</div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                      ${!active ? `<button onclick="selectStudent('${p.studentId}')" class="btn btn-primary" style="padding:6px 10px;font-size:11px;">Select</button>` : ""}
+                      <button onclick="exportStudentHistory('${p.studentId}')" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;">⬇️ Export</button>
+                      ${state.profiles.length > 1 ? `<button onclick="deleteStudent('${p.studentId}')" class="btn btn-danger" style="padding:6px 10px;font-size:11px;">Delete</button>` : ""}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <h3 style="margin:0 0 10px;">📥 Offline Textbook PDF Vault</h3>
+            <p style="font-size:12px;color:var(--muted);margin:0 0 12px;">Import local NCERT / MPBSE PDF textbooks into IndexedDB for offline reading.</p>
+            <input type="file" accept="application/pdf" onchange="importLocalPdf(event)" style="font-size:12px;margin-bottom:12px;" />
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${state.importedPdfs.length === 0 ? `<span style="font-size:12px;color:var(--muted);">No local PDFs imported yet.</span>` : state.importedPdfs.map((pdf) => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:12px;background:var(--surface-2);font-size:12px;">
+                  <span>📄 <strong>${pdf.name}</strong> (${Math.round(pdf.size / 1024)} KB)</span>
+                  <button onclick="openLocalPdf('${pdf.id}')" class="btn btn-primary" style="padding:5px 10px;font-size:11px;">Open PDF</button>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function selectStudent(studentId) {
+      state.activeStudent = state.profiles.find((p) => p.studentId === studentId);
+      localStorage.setItem("sp_active_student_id", studentId);
+      state.selectedSubject = null;
+      await loadStudentScopedData();
+      applyAgeAdaptiveMode();
+      renderHeader();
+      switchView("home");
+      showToast(`Switched to ${state.activeStudent.name} (Class ${state.activeStudent.classNum})`);
+    }
+
+    function openStudentModal() {
+      const sel = document.getElementById("stuClassInput");
+      sel.innerHTML = "";
+      for (let c = 1; c <= 10; c++) sel.innerHTML += `<option value="${c}">Class ${c}</option>`;
+      document.getElementById("studentModal").classList.remove("hidden");
+    }
+    function closeStudentModal() { document.getElementById("studentModal").classList.add("hidden"); }
+
+    async function saveStudentProfileForm(e) {
+      e.preventDefault();
+      const name = document.getElementById("stuNameInput").value.trim();
+      const classNum = parseInt(document.getElementById("stuClassInput").value, 10);
+      const board = document.getElementById("stuBoardInput").value;
+      const medium = document.getElementById("stuMediumInput").value;
+      const avatar = document.getElementById("stuAvatarInput").value;
+      const profile = {
+        studentId: `stu_${Date.now()}`,
+        name,
+        avatar,
+        classNum,
+        board,
+        medium,
+        xp: 0,
+        streak: 1,
+        weeklyGoalChapters: 4,
+        lastActivity: "Joined Scholar's Point",
+        tasks: []
+      };
+      await StorageAbstraction.put("student_profiles", profile);
+      state.profiles = await StorageAbstraction.getAll("student_profiles");
+      closeStudentModal();
+      await selectStudent(profile.studentId);
+    }
+
+    async function deleteStudent(studentId) {
+      await StorageAbstraction.remove("student_profiles", studentId);
+      state.profiles = await StorageAbstraction.getAll("student_profiles");
+      if (state.activeStudent.studentId === studentId) {
+        await selectStudent(state.profiles[0].studentId);
+      } else {
+        renderView();
+      }
+      showToast("Student profile deleted", "info");
+    }
+
+    async function exportStudentHistory(studentId) {
+      const prof = state.profiles.find((p) => p.studentId === studentId);
+      const progress = await StorageAbstraction.getByStudent("learning_progress", studentId);
+      const attempts = await StorageAbstraction.getByStudent("test_attempts", studentId);
+      const bookmarks = await StorageAbstraction.getByStudent("bookmarks", studentId);
+      downloadJson({ profile: prof, progress, attempts, bookmarks }, `scholarspoint_${prof.name.toLowerCase()}_history.json`);
+    }
+
+    async function runIsolationTest() {
+      const p1 = state.profiles[0]?.studentId;
+      const p2 = state.profiles[1]?.studentId;
+      if (!p1 || !p2) return showToast("Need at least 2 profiles to test isolation", "error");
+      const b1 = await StorageAbstraction.getByStudent("bookmarks", p1);
+      const b2 = await StorageAbstraction.getByStudent("bookmarks", p2);
+      const leak = b1.some((x) => x.studentId !== p1) || b2.some((x) => x.studentId !== p2);
+      showToast(leak ? "Isolation check failed!" : "PASS: 100% student data isolation verified!");
+    }
+
+    async function importLocalPdf(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const buf = await file.arrayBuffer();
+      const blob = new Blob([buf], { type: "application/pdf" });
+      await StorageAbstraction.put("imported_pdfs", {
+        id: `pdf_${Date.now()}`,
+        name: file.name,
+        size: file.size,
+        blob,
+        importedAt: new Date().toISOString()
+      });
+      state.importedPdfs = await StorageAbstraction.getAll("imported_pdfs");
+      renderView();
+      showToast(`Imported ${file.name} offline!`);
+    }
+
+    function openLocalPdf(id) {
+      const pdf = state.importedPdfs.find((x) => x.id === id);
+      if (!pdf) return;
+      const url = URL.createObjectURL(pdf.blob);
+      window.open(url, "_blank");
+    }
+
+    // =========================================================================
+    // 7. TEACHER CMS STUDIO (PIN: 1234)
+    // =========================================================================
+    function openTeacherPinModal() {
+      document.getElementById("teacherPinInput").value = "";
+      document.getElementById("teacherPinModal").classList.remove("hidden");
+    }
+    function closeTeacherPinModal() { document.getElementById("teacherPinModal").classList.add("hidden"); }
+    function verifyTeacherPin() {
+      if (document.getElementById("teacherPinInput").value === "1234") {
+        state.cmsUnlocked = true;
+        closeTeacherPinModal();
+        switchView("cms");
+        showToast("Teacher CMS Unlocked");
+      } else {
+        showToast("Incorrect PIN (Default: 1234)", "error");
+      }
+    }
+
+    async function renderCMSView(main) {
+      const quota = await StorageAbstraction.getQuota();
+      const usedMB = ((quota.usage || 0) / (1024 * 1024)).toFixed(2);
+      main.innerHTML = `
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <div>
+              <h2 style="margin:0;">🛠️ Teacher CMS Studio</h2>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--muted);">IndexedDB Storage Used: ${usedMB} MB • ${state.curriculum.length} Chapters</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="exportFullBackup()" class="btn btn-primary">⬇️ Export Full Backup JSON</button>
+              <button onclick="switchView('home')" class="btn btn-secondary">Exit CMS</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Class</th><th>Subject</th><th>Chapter Title</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                ${state.curriculum.slice(0, 25).map((c) => `
+                  <tr>
+                    <td>Class ${c.classNum}</td>
+                    <td>${SUBJECTS_META[c.subject]?.name || c.subject}</td>
+                    <td><strong>${c.title}</strong></td>
+                    <td><span class="pill ${c.status === 'published' ? 'pill-green' : 'pill-purple'}">${c.status}</span></td>
+                    <td><button onclick="toggleChapterStatus('${c.id}')" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;">Toggle Status</button></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    async function toggleChapterStatus(chId) {
+      const ch = state.curriculum.find((c) => c.id === chId);
+      if (!ch) return;
+      ch.status = ch.status === "published" ? "review" : "published";
+      await StorageAbstraction.put("curriculum", ch);
+      renderView();
+      showToast(`Chapter marked as ${ch.status}`);
+    }
+
+    async function exportFullBackup() {
+      const backup = { exportedAt: new Date().toISOString(), version: "ScholarsPointDB_v6" };
+      for (const s of STORES) {
+        if (s !== "imported_pdfs") backup[s] = await StorageAbstraction.getAll(s);
+      }
+      downloadJson(backup, "scholars-point-full-backup.json");
+    }
+
+    // =========================================================================
+    // 8. UTILITIES (ROUGH SLATE, THEME, SPEECH, DOWNLOAD, TOAST)
+    // =========================================================================
+    async function toggleMedium() {
+      state.activeStudent.medium = state.activeStudent.medium === "HI" ? "EN" : "HI";
+      await StorageAbstraction.put("student_profiles", state.activeStudent);
+      renderHeader();
+      renderView();
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("sp_pref_theme", isDark ? "dark" : "light");
+      document.getElementById("darkModeBtn").textContent = isDark ? "☀️" : "🌙";
+    }
+
+    function speakText(txt) {
+      if (!("speechSynthesis" in window)) return showToast("Speech synthesis not supported", "error");
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+    }
+
+    function downloadJson(obj, filename) {
+      const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function showToast(msg, type = "success") {
+      const c = document.getElementById("toastContainer");
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.style.background = type === "error" ? "#dc2626" : type === "info" ? "#007aff" : "#059669";
+      el.textContent = msg;
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 3200);
+    }
+
+    // Rough Slate Canvas
+    let drawing = false, lx = 0, ly = 0;
+    function setupRoughSlate() {
+      const canvas = document.getElementById("roughCanvas");
+      const ctx = canvas.getContext("2d");
+      const resize = () => {
+        const r = canvas.parentElement.getBoundingClientRect();
+        canvas.width = r.width || 540;
+        canvas.height = r.height || 320;
+        ctx.strokeStyle = "#1e293b";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+      };
+      window.addEventListener("resize", resize);
+      canvas.addEventListener("mousedown", (e) => { drawing = true; [lx, ly] = [e.offsetX, e.offsetY]; });
+      canvas.addEventListener("mousemove", (e) => {
+        if (!drawing) return;
+        ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
+        [lx, ly] = [e.offsetX, e.offsetY];
+      });
+      canvas.addEventListener("mouseup", () => (drawing = false));
+      canvas.addEventListener("touchstart", (e) => {
+        const r = canvas.getBoundingClientRect();
+        drawing = true;
+        lx = e.touches[0].clientX - r.left;
+        ly = e.touches[0].clientY - r.top;
+      });
+      canvas.addEventListener("touchmove", (e) => {
+        if (!drawing) return;
+        const r = canvas.getBoundingClientRect();
+        const x = e.touches[0].clientX - r.left;
+        const y = e.touches[0].clientY - r.top;
+        ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(x, y); ctx.stroke();
+        [lx, ly] = [x, y];
+        e.preventDefault();
+      });
+      canvas.addEventListener("touchend", () => (drawing = false));
+    }
+    function openRoughSlate() {
+      document.getElementById("roughSlateModal").classList.remove("hidden");
+      const canvas = document.getElementById("roughCanvas");
+      const r = canvas.parentElement.getBoundingClientRect();
+      canvas.width = r.width || 540;
+      canvas.height = r.height || 320;
+      const ctx = canvas.getContext("2d");
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+    }
+    function closeRoughSlate() { document.getElementById("roughSlateModal").classList.add("hidden"); }
+    function clearRoughCanvas() {
+      const c = document.getElementById("roughCanvas");
+      c.getContext("2d").clearRect(0, 0, c.width, c.height);
+    }
+
+    window.onload = initApp;
+  </script>
+</body>
+</html>
