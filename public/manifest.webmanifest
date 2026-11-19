@@ -1,0 +1,16 @@
+{
+  "name": "Scholar's Point Coaching Platform",
+  "short_name": "Scholar's Point",
+  "description": "Offline-first multi-student NCERT, CBSE & MPBSE learning platform for Classes 2–10.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f393.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ]
+}
